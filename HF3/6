@@ -1,0 +1,45 @@
+HF3/6 Ebben a feladatban egy .wav filet kellett elemezni majd a Fourier-spektrumát elkészíteni és a jel spektrogrammját is.
+
+from scipy.io import wavfile
+import scipy.io
+%pylab inline
+
+samplerate, data = wavfile.read('/v/courses/fiznum1.public/data/tight_beam_message.wav') #beolvassuk a filet
+
+hossz = data.shape[0] / samplerate #megnézzük a hosszát
+print(f"hossz = {hossz}s")
+
+time = linspace(0, hossz, data.shape[0]) #időbeli lefutás ábra
+plot(time, data, label="üzenet")
+xlabel("Idő [s]")
+ylabel("Amplitúdó")
+grid()
+
+fur=fft.fft(data) #furier trafó
+
+freq=fftfreq(len(data),1) #a frekvenciák
+
+figure(figsize=(26,16)) #itt bejelöljük a max pontot
+plot(freq,abs(fur))
+xlim(0,0.5)
+
+maxN=max(abs(fur)[(freq>0.03)*(freq<0.2)])
+maxf=freq[(abs(fur)==maxN)*(freq>0)]
+plot(maxf,maxN,'o',color='red') # Egy kis piros pont a csúcson
+xlabel('frekvencia',fontsize=20)
+ylabel('spektrum',fontsize=20)
+text(0.1,29900000,str(1/maxf[0]),fontsize=50)
+
+
+from scipy import signal
+
+fs=len(freq)/max(freq) #a spektrogram változója
+
+f, t, spekt = signal.spectrogram(data, fs) #maga a spektrogram
+
+figure(figsize=(26,16))
+       
+pcolormesh(t, f, spekt, shading='gouraud')  #és a plotja
+ylabel('Frekvencia [Hz]')
+xlabel('Idő [sec]')
+show()
