@@ -1,0 +1,44 @@
+HF1/3 Ez egy indexszáláló illetve ellenőrző függvény.
+
+def index1(latex):
+    
+    l=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    k=[]
+    ind={} 
+    for i in l:
+        zi=0
+        y=1
+        x=latex
+
+        for j in range(0,len(x)): 
+            if x[j]=='_' and x[j+1]=='{': 
+                while y>0: 
+                    j+=1
+                
+                
+                    if x[j]==i:
+                        zi+=1
+                        
+                    
+                    if x[j]=='}':
+                        break
+                
+            if x[j]=='_' and x[j+1]==i:
+                zi+=1   
+                
+        if zi>0:
+            ind[i]=zi
+    
+    zval=1   
+    for j in ind.values(): 
+        if j>2:
+            zval=0 
+            
+    if zval==0: 
+        ind['VALID']=False
+    else:  
+        ind['VALID']=True
+      
+    
+    
+    return ind 
