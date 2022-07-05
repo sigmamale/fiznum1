@@ -1,0 +1,44 @@
+HF3/2 Ebben a feladatban mappák mélyén elrejtett fileokat kellett megtalálni.
+
+import os #kellett az os
+%pylab inline 
+
+m=0
+
+for r,d,f in os.walk("/v/courses/fiznum1.public/data/katyvasz"): 
+    if not d:
+        m+=1
+m   
+
+
+l=[] #egy lista
+a=0
+k=range(0,10) #egy 0-9-ig számokat tartalmazó lista
+for i in k: #mind a 0-9 ig végignézzük
+    for r,d,f in os.walk("/v/courses/fiznum1.public/data/katyvasz"): #ez megkeresi a katyvaszon belül a file-okat
+        for files in f:
+             if files == str(i)+'.npy': #ez az adott file-t nézi mondjuk 5.npy
+                l.append(os.path.join(r,files)) #madj az útvonalat a listához adjuk
+                
+                print(str(a)+'.npy megvan') #egy kis visszajelzés
+                a+=1
+                
+l    
+
+
+ar0=load(l[0]) #betöltjük mind
+ar1=load(l[1])
+ar2=load(l[2])
+ar3=load(l[3])
+ar4=load(l[4])
+ar5=load(l[5])
+ar6=load(l[6])
+ar7=load(l[7])
+ar8=load(l[8])
+ar9=load(l[9])
+
+
+ar=concatenate((ar0,ar1,ar2,ar3,ar4,ar5,ar6,ar7,ar8,ar9)) #a concatenate segítségével összegyúrjuk
+
+
+imshow(ar) #berikrollolódunk xd
