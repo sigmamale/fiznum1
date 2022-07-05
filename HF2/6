@@ -1,0 +1,196 @@
+HF2/6 Ebben a feladatban N darab rugókkal összekötött tömegpontok mozgásegyenletét kellett megoldani.
+
+from scipy.integrate import odeint
+import numpy as np
+%matplotlib inline
+import matplotlib.pyplot as plt
+
+
+N=100 #a goylók száma 
+
+k=1 #k állandó
+
+m=1 #m tömeg
+
+tm=[0,100] #t0: kezdő idő - t1: futtatás vége
+
+vkezdo=[1,1] #tetszőleges v kezdősebesség: első érték 1-től N-ig -> v1-vN, második érték a sebesség nagysága
+
+
+km=k/m #a km a k és az m hányadosa
+
+d1=np.array(np.ones(N-1)) #egyesek
+d2=np.array(np.ones(N)*-2) #-2-esek
+d3=np.diag(d1,-1) #egyel letolt diagonális mátrix az N-1 darab egyesünkből
+d4=np.diag(d1,1) #ugyanez föltolva
+d5=np.diag(d2) #aztán a diagonális -2-es mátrix
+D0=d3+d4+d5 #a három összege
+D=km*D0 #mivel a hányadost kiszámoltuk csak be kell szorozni vele a mátrixot és kész a D
+
+NN=N+vkezdo[0]-1 #megfelelően működjenek az indexek, itt a valahanyadik golyónak adunk sebességet
+ertek=vkezdo[1] #mekkora sebességet adjunk
+
+q0=np.array(np.zeros(N*2)) #ez a kezdeti feltétel még 2N darab nulla
+q0[NN]=ertek #itt a kiszemelt golyónak adunk valamekkora sebességet
+
+
+def g(q,t): #a növekményfüggvény
+    
+    l=[] #egy list
+    vv=[] #ez fontos ez lesz a kimenet
+    
+    for i in range(0,N):
+        ui=q[i] #itt létrehozunk N darab u-golyó kitérést u0,u1,u2...uN értéke q i-edik eleme lesz, [0,0,0,1,0,0] itt ugye az első 3 db nulla u0-u2
+        l.append(ui)
+        
+    for j in range(N,2*N): #ezt eljátszuk a v-vel itt nem lényeges, hogy a v-ket nem 0-tól indexeljük csak az értéke kell, [0,0,0,1,0,0] itt ugye az első v az 1 a többi 0       
+        vj=q[j]
+        vv.append(vj) 
+           
+    
+    uu=np.array(l) #uu egy array lesz aminek az elemei az u-k
+    
+    hl=[] #egy segédlista
+    for h in range(0,N): #itt hattatom a D-t az u-vektorra
+        uuh=(D@uu)[h] #ez egy vektor lesz amit elemenként a hl-be teszek
+        hl.append(uuh)
+        
+      
+    
+    for j in hl: #majd hl elemeit egyesével hozzáírom a vv-hez, ugye a vv-ben itt az u-k első deriváltja van és most kerül bele az u-k második deriváltja 
+        vv.append(j)
+    
+    return vv #térjen vissza a vv-re
+    
+    
+tdb=tm[1]*10
+t=np.linspace(tm[0],tm[1],tdb) #meghatározzuk az időintervallumot
+q=odeint(g,q0,t) #és akkor oldja meg
+np.shape(q)
+
+
+plt.figure(figsize=(16,6))
+plt.plot(t,q[:,0]) #első golyó kitérése
+plt.legend(['x(t)'],loc=0,fontsize=12)
+plt.title("első golyó kitérés-idő függvénye",fontsize=15)
+plt.xlabel('t',fontsize=15),plt.ylabel('x',fontsize=15)
+plt.grid()
+
+
+plt.figure(figsize=(16,6))
+plt.plot(t,q[:,49]),plt.plot(t,q[:,149])
+plt.legend(['x(t)','v(t)'],loc=0,fontsize=12)
+plt.title("félúton a v(t), x(t)",fontsize=15)
+plt.xlabel('t',fontsize=15),plt.ylabel('x - v',fontsize=15)
+plt.grid()
+
+
+kv=np.random.uniform(0.5,1.5,10) #akkor felveszünk 10 db véletlen számot
+kv
+
+maxk=np.where(kv==max(kv))[0][0] #ezek a legnagyobb és legkisebb k értékek indexei a plotoláshoz kellenek
+mink=np.where(kv==min(kv))[0][0]
+
+ode10=[] #ebbe a listába gyűjtjük az eredményeket
+for i in kv:
+    N=100 #a goylók száma 
+
+    k=i #k a kv-ból ugye
+
+    m=1 #m tömeg
+
+    tm=[0,100] #t0: kezdő idő - t1: futtatás vége
+
+    vkezdo=[1,1] #akkor végigmegy az egész
+
+    km=k/m
+
+    d1=np.array(np.ones(N-1))
+    d2=np.array(np.ones(N)*-2)
+    d3=np.diag(d1,-1)
+    d4=np.diag(d1,1)
+    d5=np.diag(d2)
+    D0=d3+d4+d5
+    D=km*D0
+
+    NN=N+vkezdo[0]-1
+    ertek=vkezdo[1]
+
+    q0=np.array(np.zeros(N*2))
+    q0[NN]=ertek
+
+
+    def g(q,t):
+
+        l=[]
+        vv=[]
+
+        for i in range(0,N):
+            ui=q[i]
+            l.append(ui)
+            
+        for j in range(N,2*N):        
+            vj=q[j]
+            vv.append(vj)
+            
+
+        uu=np.array(l)
+
+        hl=[]
+        for h in range(0,N):
+            uuh=(D@uu)[h]
+            hl.append(uuh)
+
+
+
+        for j in hl:
+            vv.append(j)
+
+        return vv
+
+
+
+
+    tdb=tm[1]*10
+    t=np.linspace(tm[0],tm[1],tdb)
+    q=odeint(g,q0,t)
+    ode10.append(q) #itt meg beleappendelődik a listába
+
+len(ode10) #tényleg 10 elemű
+
+plt.figure(figsize=(16,6))
+plt.plot(t,ode10[mink][:,19]),plt.plot(t,ode10[maxk][:,19]) #itt látszik a különbség, legalább is remélem, ha pici az eltérés a kv-tól újra lehet futtatni
+plt.legend(['x(t) k='+str(kv[mink]),'x(t) k='+str(kv[maxk])],loc=4,fontsize=10)
+plt.title("a k tényező hatása 20. golyónál",fontsize=15)
+plt.xlabel('t',fontsize=15),plt.ylabel('x',fontsize=15)
+plt.grid()
+
+
+r3=[]
+for c in range(0,10):
+    
+    qr=ode10[c]
+    r1=[]
+    r2=[]
+
+    for i in range(0,1000):
+        ar=qr[i][49] #49. oszlop tartalmazza az 1000 db adatopntot ami az 50. tömegponthoz tartozik
+        r1.append(ar)
+
+    for j in r1:
+        r2.append(abs(j))
+
+
+    br=max(r2) #ennek ugye dif-egyenletenkét van 1 db maximuma
+    dr=r2.index(br)
+    r3.append(dr)
+    
+print(r3) #összesen 10 db időpillanat jön ki ugye tizedmásodpercre pontosan 
+
+
+plt.figure(figsize=(8,6))
+plt.plot(kv,r3, 'o')
+plt.legend('t(k)',loc=4,fontsize=10)
+plt.title("50. tömegpont t(k) függvénye",fontsize=15)
+plt.xlabel('k',fontsize=15),plt.ylabel('t (0.1s)',fontsize=15)
+plt.grid()
