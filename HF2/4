@@ -1,0 +1,25 @@
+HF2/4 Ebben a feladatban függvények által határolt alakzatok tömegközéppontjukat kellett kiszámítani egy megadott sűrűségfüggvény alapján.
+
+import scipy.integrate as integrate
+import numpy as np
+
+def ax(y,x): #x pont integrandusa ami a tmkp x koordinátája
+    return x*((x*y)+(x**2))
+def ay(y,x): #y pont integrandusa ami a tmkp x koordinátája
+    return y*((x*y)+(x**2))
+def aM(y,x): #M integrandusa az M a tömeg az adott sűrűségfüggvénnyel kiszámítva
+    return ((x*y)+(x**2))
+    
+aix=integrate.dblquad(ax,-1,1, lambda x: 0, lambda x: (1-(x**2))**0.5) #x pont integrálja
+aix  
+
+aiy=integrate.dblquad(ay,-1,1, lambda x: 0, lambda x: (1-(x**2))**0.5) #y pont integrálja
+aiy
+
+aiM=integrate.dblquad(aM,-1,1, lambda x: 0, lambda x: (1-(x**2))**0.5) #tömeg (integrálással) 
+aiM
+
+atx=(1/aiM[0])*aix[0] #x pont
+aty=(1/aiM[0])*aiy[0] #y pont
+atk=np.array([atx,aty]) #tömegközéppont koordinátái
+atk
