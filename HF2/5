@@ -1,0 +1,102 @@
+Ebben a feladatban egy matematikai inga differenciálegyenletét kellett megoldani numerikus módszerekkel.
+
+from scipy.integrate import odeint
+import numpy as np
+%matplotlib inline
+import matplotlib.pyplot as plt
+
+g=10 #g legyen
+l=1 #l a kötél hossza
+omega=np.random.uniform(0,5,1) #omega tetszőleges
+print(omega)
+q0=[0.1,0] #kezdeti értékek
+tm=[0,5] #0-5s ig
+
+
+def f(q,t):
+    teta=q[0] #teta az ugye a q első értéke
+    v=q[1] #a v ugye a q második értéke
+    
+    gl=g/l #ne egyfüst alatt legyen meg az egyenlet 
+    omega2=omega**2
+    cs=np.cos(teta)
+    sn=np.sin(teta)
+    
+    ddteta=(-gl)*(1-(omega2*gl*cs))*sn #a teta második deriváltja
+    return [v,ddteta] #első derivált meg a második
+  
+  
+tdb=1000
+t=np.linspace(tm[0],tm[1],tdb) #meghatározzuk az időintervallumot
+q=odeint(f,q0,t) #és akkor oldja meg
+np.shape(q) #megoldjuk
+
+plt.figure(figsize=(16,6))
+plt.plot(t,q[:,0]),plt.plot(t,q[:,1])  #teta és v plotja
+plt.legend(['szög(t)','szösebesség(t)'],loc=0,fontsize=12)
+plt.title("szög-szögsebesség ábrázolása",fontsize=15)
+plt.xlabel('t',fontsize=15),plt.ylabel('teta-v',fontsize=15)
+plt.grid()
+
+
+g=10 #az értékeket vegyük fel újra
+l=1
+q0=[0.1,0]
+tm=[0,5]
+
+l1=[]
+omegal=np.linspace(0,5,100)
+for i in range(0,100): #csináljuk meg a növekményfüggvényt mind a 100 db omega értékre 
+
+    omega=omegal[i]
+
+    def f(q,t):
+        teta=q[0]
+        v=q[1]
+
+        gl=g/l
+        omega2=omega**2
+        cs=np.cos(teta)
+        sn=np.sin(teta)
+
+        ddteta=(-gl)*(1-(omega2*gl*cs))*sn
+        return [v,ddteta]
+    
+    tdb=100
+    t=np.linspace(tm[0],tm[1],tdb) #meghatározzuk az időintervallumot
+    q=odeint(f,q0,t) #és akkor oldja meg
+    l1.append(q)
+    
+    l2=[]
+for i in range(0,100): #akkor szedjük ki a kitérés értékeket
+    l2.append(l1[i][:,0]) 
+    
+r1=[]
+r2=[]
+r3=[]
+
+
+for i in range(0,100): #aztán a min-max értékeket 2 listába
+    a1=min(l2[i])
+    a2=max(l2[i])
+    r1.append(a1)
+    r2.append(a2)
+    
+for j in range(0,100): #majd a legnagyobb abszolútértékűeket tegyük egy 3. listába
+    if abs(r1[j]) > abs(r2[j]):
+        r3.append(abs(r1[j]))
+    if abs(r1[j]) < abs(r2[j]):
+        r3.append(abs(r2[j]))
+    if abs(r1[j]) == abs(r2[j]):
+        r3.append(abs(r2[j]))
+        
+len(r3)        
+
+
+omegar=np.linspace(0,5,100) #ezt plotoljuk ki omega függvényében
+plt.figure(figsize=(16,6))
+plt.plot(omegar,r3)  
+plt.legend(['szög(t)','szösebesség(t)'],loc=0,fontsize=12)
+plt.title("szög az omega függvényében",fontsize=15)
+plt.xlabel('omega',fontsize=15),plt.ylabel('max teta',fontsize=15)
+plt.grid()
