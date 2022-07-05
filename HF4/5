@@ -1,0 +1,47 @@
+HF4/5 Ebben a feladatban egy megadott erőtérben mozgó méhecske vonalintegrálját kellett kiszámítani alanitikusan.
+
+%matplotlib inline
+from sympy import * 
+init_printing()    
+
+x,y,z,t=symbols('x,y,z,t') #felvesszük a kellő változókat
+
+a,b,c,f,h,k,R,T=symbols('a,b,c,f,h,k,R,T' ,real=True) #a paraméterekről feltettem hogy valósak
+
+
+
+rt=rT=R*(1-(t/T)) #felvesszük az r(t)-t
+
+xt=rt*cos(t) #felírjuk hogy az x,y,z hogy függ a t-től ugye használjuk az r(t)-t
+yt=rt*sin(t)
+zt=R-(Rational(32,5))*((rt**4)/(R**3))+(Rational(27,5))*((rt**6)/(R**5))
+
+#ezek így az s(t) helyvektor komponensei 
+
+Fx=(2*a*xt)-b-(2*f*xt*yt)+h*(yt**2) #beírjuk a t függő x,y,z-t a vektormezőbe 
+Fy=(3*c*(yt**2))-(f*(xt**2))+(2*h*xt*yt)
+Fz=-k
+
+#Ezek az F(s(t)) vektormező komponensei
+
+st=Matrix([[xt], [yt],[zt]]) #elkészítjük az s(t) helyvektort
+dst=diff(st,t) #elkészítjük az s(t) t szerinti deriváltját
+
+Fst = Matrix([[Fx], [Fy], [Fz]]) #A vektormező s(t)-vel kifejezve F(s(t))
+
+st #s(t) helyvektorral paraméterezve a görbe
+
+dst #az s(t)-nek az ő deriváltja ugye a paramétere szerint
+
+Fst #az s(t) komponenseivel felírt F(s(t)) vektormező
+
+#skalárszorzat
+
+intrandus=(dst[0]*Fst[0])+(dst[1]*Fst[1])+(dst[2]*Fst[2])
+intrandus
+
+#ugye a t paraméter fut [0,T]
+
+W=integrate( intrandus,(t,0,T) )
+
+simplify(W)
