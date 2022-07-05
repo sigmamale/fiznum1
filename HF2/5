@@ -1,4 +1,4 @@
-Ebben a feladatban egy matematikai inga differenciálegyenletét kellett megoldani numerikus módszerekkel.
+HF2/5 Ebben a feladatban egy matematikai inga differenciálegyenletét kellett megoldani numerikus módszerekkel.
 
 from scipy.integrate import odeint
 import numpy as np
