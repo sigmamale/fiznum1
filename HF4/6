@@ -1,0 +1,45 @@
+HF4/6 Ebben a feladatban egy űrhajó terhelését kellett analitikusan végigszámolni.
+
+
+%matplotlib inline
+from sympy import * 
+init_printing()     
+
+t=symbols('t') #felvesszük az idő változót t-ként
+
+rx=-((sqrt(2)*t)/(2))+sqrt(3)*(Rational(1,2)-((t**2)/(4)))-((sqrt(2)-1)*((t/2) + Rational(1,64))*exp(-64*t))+((sqrt(2)-1)/(64))
+
+ry=-((t**2)/(4))+sqrt(3)*( (sqrt(2)*t)/(2) + ((sqrt(2)-1)*((t/2)+Rational(1,64))*exp(-64*t)) - ((sqrt(2)-1)/(64)) )+Rational(1,2)
+
+
+r=Matrix([[rx],[ry]]) #majd egy oszlopvektorba felírtam
+r
+
+v=diff(r,t) #először az első deriváltat v-t kiszámolom
+
+a=diff(v,t) #majd v-t deriválva megkapom az a-t
+a
+
+r0=r.subs(t,0) #az r(t=0) 
+r0
+
+rh0=sqrt((r0[0]**2)+(r0[1]**2)) #az r(t=0) hossza
+rh0
+
+Fg0=-(1/(rh0**3))*(r0) #a gravitációs erő r(t=0) pontban
+Fg0
+
+Ft=a*1-Fg0 #Ft tolóerő m-et 1-nek vettem
+Ft
+
+Ftht=sqrt((Ft[0]**2)+(Ft[1]**2)) #Ft hossza 
+Ftht
+
+Fthts=simplify(Ftht) #egyszerűbb alakban
+Fthts
+
+from sympy.plotting import *
+
+plot(Ftht,(t,0,0.1),title='Tolóerő-idő függvény t [0,0,1]',ylabel='F') #majd különböző időintervallumokra plot
+
+plot(Ftht,(t,0,0.2),title='Tolóerő-idő függvény t [0,0,2]',ylabel='F')
