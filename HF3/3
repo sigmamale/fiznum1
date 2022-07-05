@@ -1,0 +1,55 @@
+HF3/3 Ebben a feladatban covid adatokar kellett Gauss görbéket illeszteni.
+
+%pylab inline
+with open('/v/courses/fiznum1.public/data/covid_data.csv') as a: #megnyitjuk az adatfilet
+    sorok=a.readlines()
+sorok[775:-1] #kicit értelmeztem
+
+
+egy=np.array([zeros(785),zeros(785),zeros(785)]) #a 3 számadatot tudtam egy arraybe bedobálni
+dat=[]
+for i in range(0,785):
+    
+    dat.append((sorok[i].split(','))[0])
+    
+    egy[0][i]=float((sorok[i].split(','))[1])
+    egy[1][i]=float((sorok[i].split(','))[2])
+    egy[2][i]=float((sorok[i].split(','))[3]) 
+    
+print(a.closed) #bezáródott szuper
+
+
+print(egy[0][775:-1]) #az arrayben minden szuper
+print(egy[1][775:-1])
+print(egy[2][775:-1])
+
+figure(figsize=(26,16)) #itt a fertőzöttek-idő függvény
+plot(datum, egy[0][0:])
+legend(['fertőzöttek(idő)'],loc=0,fontsize=20)
+title("fertőzöttek-idő függvény",fontsize=20)
+xlabel('dátum',fontsize=15),plt.ylabel('fertőzöttek',fontsize=20)
+grid()
+
+from scipy.optimize import curve_fit
+
+def func(x,a,b,c): #Gauss-görbe
+    return a*exp( -( ((x-b)**2)/(c)**2 ) )
+
+
+a1=105;b1=456;c1=38;x1=egy[2][440:470] #a kézzel kisajtolt adatokat megadjuk
+
+popt1, pcov1=curve_fit(func,egy[2][435:480], egy[0][435:480],p0=[a1,b1,c1]) #fittelünk
+print(['a','b','c'])
+print(popt1)
+print(sqrt(diag(pcov1)))
+
+
+a=popt1[0];b=popt1[1];c=popt1[2] #ilyen lett
+x=egy[2][435:480]
+d=datum[435:480]
+figure(figsize=(26,16))
+plot(datum, egy[0]),plot(d,a*exp(-(( x-b)/c)**2))
+legend(['fertőzöttek(idő)'],loc=0,fontsize=20)
+title("fertőzöttek-idő függvény",fontsize=20)
+xlabel('dátum',fontsize=15),plt.ylabel('fertőzöttek',fontsize=20)
+grid()
