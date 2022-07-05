@@ -1,4 +1,4 @@
-HF2/4 Ebben a feladatban függvények által határolt alakzatok tömegközéppontjukat kellett kiszámítani egy megadott sűrűségfüggvény alapján.
+HF2/4 Ebben a feladatban függvények által határolt alakzatok tömegközéppontjaikat kellett kiszámítani egy megadott sűrűségfüggvény alapján.
 
 import scipy.integrate as integrate
 import numpy as np
